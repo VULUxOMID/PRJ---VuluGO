@@ -5,7 +5,10 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
 export const generateCode = inngest.createFunction(
-  { name: 'Generate Code' },
+  { 
+    id: 'generate-code',
+    name: 'Generate Code' 
+  },
   { event: 'app/code.generate' },
   async ({ event, step }) => {
     const { prompt, projectId, userId } = event.data;

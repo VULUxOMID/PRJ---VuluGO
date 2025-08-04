@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { publicProcedure, router } from '../init';
+import { inngest } from '@/inngest/client';
 
 export const aiRouter = router({
   generateCode: publicProcedure
@@ -12,8 +13,15 @@ export const aiRouter = router({
       try {
         console.log('Generating code for prompt:', input.prompt);
         
-        // For now, let's just return a success message without Inngest
-        // We'll add Inngest back once we fix the basic tRPC setup
+        // Trigger Inngest function
+        await inngest.send({
+          name: 'app/code.generate',
+          data: {
+            prompt: input.prompt,
+            projectId: input.projectId,
+            userId: input.userId,
+          },
+        });
         
         return { 
           success: true, 
