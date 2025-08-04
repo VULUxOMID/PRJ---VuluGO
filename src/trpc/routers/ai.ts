@@ -18,7 +18,7 @@ export const aiRouter = router({
         const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
         
         const result = await model.generateContent(`
-          Generate a complete React component based on this prompt: "${input.prompt}"
+          Generate a complete, self-contained React component based on this prompt: "${input.prompt}"
           
           Requirements:
           - Use modern React with TypeScript
@@ -26,8 +26,23 @@ export const aiRouter = router({
           - Make it functional and interactive
           - Include proper error handling
           - Add comments for clarity
+          - Use mock data instead of real API calls (no external dependencies)
+          - Make it work in a sandboxed environment
+          - Include sample data/state for demonstration
+          - Use React hooks (useState, useEffect) appropriately
+          - Make it visually appealing and modern
           
-          Return only the code, no explanations.
+          Important: 
+          - Do NOT use external API calls or axios
+          - Use mock/sample data instead
+          - Make it completely self-contained
+          - Return only the component code, no explanations
+          
+          Example structure:
+          const ComponentName: React.FC = () => {
+            const [data, setData] = useState(mockData);
+            // ... rest of component
+          };
         `);
 
         const response = await result.response;
