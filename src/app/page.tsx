@@ -2,6 +2,7 @@
 
 import { trpc } from '@/trpc/client';
 import { useState } from 'react';
+import React from 'react';
 
 export default function Home() {
   const [prompt, setPrompt] = useState('');
@@ -45,25 +46,45 @@ export default function Home() {
   // Function to create a safe component from generated code
   const createPreviewComponent = (code: string) => {
     try {
-      // Extract the component name and code
-      const componentMatch = code.match(/const\s+(\w+):\s*React\.FC/);
-      const componentName = componentMatch ? componentMatch[1] : 'GeneratedComponent';
+      // Extract the component name from different patterns
+      let componentName = 'GeneratedComponent';
       
-      // Create a safe wrapper component
-      const safeCode = `
-        import React from 'react';
-        ${code}
-        export default ${componentName};
-      `;
+      // Pattern 1: const ComponentName: React.FC
+      const pattern1 = code.match(/const\s+(\w+):\s*React\.FC/);
+      if (pattern1) {
+        componentName = pattern1[1];
+      } else {
+        // Pattern 2: function ComponentName()
+        const pattern2 = code.match(/function\s+(\w+)/);
+        if (pattern2) {
+          componentName = pattern2[1];
+        } else {
+          // Pattern 3: const ComponentName = () =>
+          const pattern3 = code.match(/const\s+(\w+)\s*=\s*\(\)\s*=>/);
+          if (pattern3) {
+            componentName = pattern3[1];
+          }
+        }
+      }
       
-      return { componentName, safeCode };
+      console.log('Extracted component name:', componentName);
+      
+      return { componentName, safeCode: code };
     } catch (error) {
       console.error('Error parsing generated code:', error);
-      return null;
+      return { componentName: 'GeneratedComponent', safeCode: code };
     }
   };
 
   const previewData = generatedCode ? createPreviewComponent(generatedCode) : null;
+
+  // Debug logging
+  React.useEffect(() => {
+    if (generatedCode) {
+      console.log('Generated Code:', generatedCode);
+      console.log('Preview Data:', previewData);
+    }
+  }, [generatedCode, previewData]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-100 p-8">
@@ -102,6 +123,45 @@ export default function Home() {
                 className="w-full bg-red-600 text-white py-3 px-6 rounded-md hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
               >
                 {isGenerating ? '🚀 Generating Your App...' : '🚀 Generate & Preview App'}
+              </button>
+              
+              <button
+                onClick={() => {
+                  setGeneratedCode(`
+const TestComponent: React.FC = () => {
+  const [count, setCount] = React.useState(0);
+  
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+      <div className="bg-white p-8 rounded-lg shadow-xl text-center">
+        <h1 className="text-3xl font-bold text-gray-800 mb-4">Test Component</h1>
+        <p className="text-gray-600 mb-6">This is a test component to verify the preview system is working!</p>
+        <div className="space-y-4">
+          <p className="text-2xl font-bold text-blue-600">Count: {count}</p>
+          <button 
+            onClick={() => setCount(count + 1)}
+            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition-colors"
+          >
+            Increment
+          </button>
+          <button 
+            onClick={() => setCount(0)}
+            className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded transition-colors ml-2"
+          >
+            Reset
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+                  `);
+                  setShowPreview(true);
+                  setResult('✅ Test component loaded successfully!');
+                }}
+                className="w-full bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 transition-colors"
+              >
+                🧪 Test Preview System
               </button>
             </div>
 
@@ -162,19 +222,27 @@ export default function Home() {
                           <script src="https://cdn.tailwindcss.com"></script>
                           <style>
                             body { margin: 0; padding: 0; }
+                            * { box-sizing: border-box; }
                           </style>
                         </head>
                         <body>
                           <div id="root"></div>
                           <script type="text/babel">
-                            ${generatedCode}
-                            ReactDOM.render(React.createElement(${previewData?.componentName || 'GeneratedComponent'}), document.getElementById('root'));
+                            try {
+                              ${generatedCode}
+                              
+                              const root = ReactDOM.createRoot(document.getElementById('root'));
+                              root.render(React.createElement(${previewData?.componentName || 'GeneratedComponent'}));
+                            } catch (error) {
+                              document.getElementById('root').innerHTML = '<div style="padding: 20px; color: red;">Error rendering component: ' + error.message + '</div>';
+                            }
                           </script>
                         </body>
                       </html>
                     `}
                     className="w-full h-full border-0"
                     title="Generated App Preview"
+                    sandbox="allow-scripts allow-same-origin"
                   />
                 </div>
               </div>
