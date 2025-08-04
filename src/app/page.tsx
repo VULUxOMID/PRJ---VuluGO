@@ -8,7 +8,7 @@ export default function Home() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [result, setResult] = useState<string>('');
 
-  const hello = trpc.hello.useQuery({ name: 'Vibe AI Builder' });
+  const hello = trpc.hello.useQuery();
   const generateCode = trpc.ai.generateCode.useMutation({
     onSuccess: (data) => {
       setIsGenerating(false);

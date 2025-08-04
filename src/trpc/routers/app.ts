@@ -4,10 +4,9 @@ import { aiRouter } from './ai';
 
 export const appRouter = router({
   hello: publicProcedure
-    .input(z.object({ name: z.string().optional() }).optional())
-    .query(({ input }) => {
+    .query(() => {
       return {
-        greeting: `Hello ${input?.name ?? 'world'}!`,
+        greeting: 'Hello Vibe AI Builder!',
       };
     }),
   ai: aiRouter,
