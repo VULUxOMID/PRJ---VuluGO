@@ -4,10 +4,10 @@ import { aiRouter } from './ai';
 
 export const appRouter = router({
   hello: publicProcedure
-    .input(z.object({ name: z.string().optional() }))
+    .input(z.object({ name: z.string().optional() }).optional())
     .query(({ input }) => {
       return {
-        greeting: `Hello ${input.name ?? 'world'}!`,
+        greeting: `Hello ${input?.name ?? 'world'}!`,
       };
     }),
   ai: aiRouter,

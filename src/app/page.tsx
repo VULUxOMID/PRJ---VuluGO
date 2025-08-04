@@ -6,16 +6,17 @@ import { useState } from 'react';
 export default function Home() {
   const [prompt, setPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [result, setResult] = useState<string>('');
 
   const hello = trpc.hello.useQuery({ name: 'Vibe AI Builder' });
   const generateCode = trpc.ai.generateCode.useMutation({
-    onSuccess: () => {
+    onSuccess: (data) => {
       setIsGenerating(false);
-      alert('Code generation started! Check Inngest dashboard.');
+      setResult(`✅ ${data.message}\nPrompt: ${data.prompt}`);
     },
     onError: (error) => {
       setIsGenerating(false);
-      alert(`Error: ${error.message}`);
+      setResult(`❌ Error: ${error.message}`);
     },
   });
 
@@ -23,6 +24,7 @@ export default function Home() {
     if (!prompt.trim()) return;
     
     setIsGenerating(true);
+    setResult('');
     generateCode.mutate({
       prompt: prompt,
       projectId: 'test-project',
@@ -67,6 +69,12 @@ export default function Home() {
               {isGenerating ? 'Generating Code...' : 'Generate Code'}
             </button>
           </div>
+
+          {result && (
+            <div className="mt-4 p-4 bg-gray-50 rounded-md">
+              <pre className="whitespace-pre-wrap text-sm">{result}</pre>
+            </div>
+          )}
         </div>
 
         <div className="bg-white rounded-lg shadow-lg p-8">
