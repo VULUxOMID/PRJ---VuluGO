@@ -7,16 +7,21 @@ export default function Home() {
   const [prompt, setPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [result, setResult] = useState<string>('');
+  const [generatedCode, setGeneratedCode] = useState<string>('');
 
   const hello = trpc.hello.useQuery();
   const generateCode = trpc.ai.generateCode.useMutation({
     onSuccess: (data) => {
       setIsGenerating(false);
       setResult(`✅ ${data.message}\nPrompt: ${data.prompt}`);
+      if (data.code) {
+        setGeneratedCode(data.code);
+      }
     },
     onError: (error) => {
       setIsGenerating(false);
       setResult(`❌ Error: ${error.message}`);
+      setGeneratedCode('');
     },
   });
 
@@ -25,6 +30,7 @@ export default function Home() {
     
     setIsGenerating(true);
     setResult('');
+    setGeneratedCode('');
     generateCode.mutate({
       prompt: prompt,
       projectId: 'test-project',
@@ -73,6 +79,15 @@ export default function Home() {
           {result && (
             <div className="mt-4 p-4 bg-gray-50 rounded-md">
               <pre className="whitespace-pre-wrap text-sm">{result}</pre>
+            </div>
+          )}
+
+          {generatedCode && (
+            <div className="mt-6">
+              <h3 className="text-lg font-semibold mb-2">Generated Code:</h3>
+              <div className="bg-gray-900 text-green-400 p-4 rounded-md overflow-x-auto">
+                <pre className="text-sm whitespace-pre-wrap">{generatedCode}</pre>
+              </div>
             </div>
           )}
         </div>
