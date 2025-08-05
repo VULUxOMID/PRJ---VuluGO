@@ -2,7 +2,7 @@ import { inngest } from "./client";
 
 // Example background function that can be invoked from the frontend
 export const helloWorld = inngest.createFunction(
-  { name: "Hello World" },
+  { id: "hello-world", name: "Hello World" },
   { event: "test/hello.world" },
   async ({ event, step }) => {
     await step.sleep("wait-a-moment", "1s");
@@ -14,9 +14,19 @@ export const helloWorld = inngest.createFunction(
   }
 );
 
+// Alternative helloWorld function that uses email
+export const helloWorldEmail = inngest.createFunction(
+  { id: "hello-world-email" },
+  { event: "test/hello.world.email" },
+  async ({ event, step }) => {
+    await step.sleep("wait-a-moment", "1s");
+    return { message: `Hello ${event.data.email}!` };
+  }
+);
+
 // Example function for processing user data
 export const processUserData = inngest.createFunction(
-  { name: "Process User Data" },
+  { id: "process-user-data", name: "Process User Data" },
   { event: "user/data.process" },
   async ({ event, step }) => {
     // Validate that event.data exists
@@ -48,4 +58,4 @@ export const processUserData = inngest.createFunction(
 );
 
 // Export all functions
-export const functions = [helloWorld, processUserData]; 
+export const functions = [helloWorld, helloWorldEmail, processUserData]; 
