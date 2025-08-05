@@ -3,6 +3,7 @@ import ServerComponent from '@/components/ServerComponent';
 import ClientComponent from '@/components/ClientComponent';
 import HydrationBoundary from '@/components/HydrationBoundary';
 import PrefetchExample from '@/components/PrefetchExample';
+import { InngestTest } from '@/components/InngestTest';
 
 const Page = async () => {
   const result = await caller.hello({ text: 'Server Page' });
@@ -39,6 +40,11 @@ const Page = async () => {
         <pre className="text-xs bg-white p-2 rounded border">
           {JSON.stringify(result, null, 2)}
         </pre>
+      </div>
+      
+      {/* Inngest Background Jobs Test */}
+      <div className="flex justify-center">
+        <InngestTest />
       </div>
     </div>
   );
