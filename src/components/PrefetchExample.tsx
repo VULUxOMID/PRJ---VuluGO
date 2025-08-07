@@ -1,48 +1,53 @@
 'use client';
 
 import { trpc } from '@/trpc/client';
-import { useEffect } from 'react';
+import { useState } from 'react';
 
 export default function PrefetchExample() {
-  const utils = trpc.useUtils();
-  
-  // Prefetch data on component mount
-  useEffect(() => {
-    utils.hello.prefetch({ text: 'Prefetched Data' });
-  }, [utils]);
+  const [inputValue, setInputValue] = useState('Example Value');
+  const invokeMutation = trpc.invoke.useMutation();
 
-  const { data, isLoading } = trpc.hello.useQuery(
-    { text: 'Prefetched Data' },
-    {
-      staleTime: 5 * 60 * 1000, // 5 minutes
-    }
-  );
-
-  const handlePrefetch = () => {
-    utils.hello.prefetch({ text: 'Manual Prefetch' });
+  const handleInvoke = () => {
+    invokeMutation.mutate({ value: inputValue });
   };
 
   return (
     <div className="p-4 border rounded-lg bg-purple-50">
-      <h2 className="text-lg font-semibold mb-2">Prefetch Example</h2>
+      <h2 className="text-lg font-semibold mb-2">Mutation Example</h2>
       <p className="text-sm text-gray-600 mb-2">
-        This component demonstrates prefetching data with tRPC.
+        This component demonstrates using tRPC mutations.
       </p>
       
-      <button
-        onClick={handlePrefetch}
-        className="mb-3 px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 text-sm"
-      >
-        Prefetch &quot;Manual Prefetch&quot;
-      </button>
+      <div className="space-y-2">
+        <input
+          type="text"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          className="w-full p-2 border rounded text-sm"
+          placeholder="Enter value..."
+        />
+        <button
+          onClick={handleInvoke}
+          className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 text-sm"
+          disabled={invokeMutation.isPending}
+        >
+          {invokeMutation.isPending ? 'Invoking...' : 'Invoke'}
+        </button>
+      </div>
       
-      {isLoading && (
-        <div className="text-sm text-gray-500">Loading...</div>
+      {invokeMutation.isPending && (
+        <div className="text-sm text-gray-500">Invoking...</div>
       )}
       
-      {data && (
+      {invokeMutation.error && (
+        <div className="text-sm text-red-500">
+          Error: {invokeMutation.error.message}
+        </div>
+      )}
+      
+      {invokeMutation.data && (
         <pre className="text-xs bg-white p-2 rounded border">
-          {JSON.stringify(data, null, 2)}
+          {JSON.stringify(invokeMutation.data, null, 2)}
         </pre>
       )}
     </div>

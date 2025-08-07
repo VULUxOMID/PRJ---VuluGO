@@ -1,7 +1,7 @@
 import { caller } from '@/trpc/server';
 
 export default async function ServerComponent() {
-  const result = await caller.hello({ text: 'Server Component' });
+  const result = await caller.invoke({ value: 'Server Component' });
   
   return (
     <div className="p-4 border rounded-lg bg-blue-50">

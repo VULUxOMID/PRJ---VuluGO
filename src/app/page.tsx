@@ -1,19 +1,19 @@
-import { caller } from '@/trpc/server';
-import ServerComponent from '@/components/ServerComponent';
+'use client';
+
 import ClientComponent from '@/components/ClientComponent';
-import HydrationBoundary from '@/components/HydrationBoundary';
 import PrefetchExample from '@/components/PrefetchExample';
 import { InngestTest } from '@/components/InngestTest';
+import { useState } from 'react';
+import { Input } from '@/components/ui/input';
+import { trpc } from '@/trpc/client';
 
-const Page = async () => {
-  const result = await caller.hello({ text: 'Server Page' });
+const Page = () => {
+  const [value, setValue] = useState("");
+  const invokeMutation = trpc.invoke.useMutation();
   
   return (
     <div className="container mx-auto p-6 space-y-6">
       <h1 className="text-3xl font-bold text-center mb-8">tRPC Examples</h1>
-      
-      {/* Server Component Example */}
-      <ServerComponent />
       
       {/* Client Component Example */}
       <ClientComponent />
@@ -21,25 +21,23 @@ const Page = async () => {
       {/* Prefetch Example */}
       <PrefetchExample />
       
-      {/* Hydration Boundary Example */}
-      <HydrationBoundary>
-        <div className="p-4 border rounded-lg bg-yellow-50">
-          <h2 className="text-lg font-semibold mb-2">Hydration Boundary</h2>
-          <p className="text-sm text-gray-600">
-            This content is wrapped in a hydration boundary for better SSR/SSG support.
-          </p>
+      {/* Input and Invoke Test */}
+      <div className="p-4 border rounded-lg bg-blue-50">
+        <h2 className="text-lg font-semibold mb-2">Input and Invoke Test</h2>
+        <div className="space-y-2">
+          <Input 
+            value={value} 
+            onChange={e => setValue(e.target.value)} 
+            placeholder="Enter a value..."
+          />
+          <button 
+            onClick={() => invokeMutation.mutate({ value })}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            disabled={invokeMutation.isPending}
+          >
+            {invokeMutation.isPending ? 'Invoking...' : 'Invoke'}
+          </button>
         </div>
-      </HydrationBoundary>
-      
-      {/* Direct Server Call */}
-      <div className="p-4 border rounded-lg bg-gray-50">
-        <h2 className="text-lg font-semibold mb-2">Direct Server Call</h2>
-        <p className="text-sm text-gray-600 mb-2">
-          This data was fetched directly on the server using tRPC caller.
-        </p>
-        <pre className="text-xs bg-white p-2 rounded border">
-          {JSON.stringify(result, null, 2)}
-        </pre>
       </div>
       
       {/* Inngest Background Jobs Test */}
