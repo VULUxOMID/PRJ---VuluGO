@@ -1,6 +1,6 @@
 FROM ubuntu:22.04
 
-# Install system dependencies
+# Install system dependencies and Node.js 20 LTS
 RUN apt-get update && apt-get install -y \
     curl \
     git \
@@ -9,8 +9,10 @@ RUN apt-get update && apt-get install -y \
     make \
     g++ \
     wget \
-    nodejs \
-    npm \
+    ca-certificates \
+    gnupg \
+    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
     && rm -rf /var/lib/apt/lists/*
 
 # Set working directory

@@ -12,6 +12,6 @@
 
 team_id = "eb0e6f98-6fc4-46ff-bce7-7987fb54c4cd"
 start_cmd = "/compile_page.sh"
-dockerfile = "e2b.Dockerfile"
+dockerfile = "E2B.dockerfile"
 template_name = "your-project-nextjs-test"
 template_id = "l5lhs6628331warwljws"
