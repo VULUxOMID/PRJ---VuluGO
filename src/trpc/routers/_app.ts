@@ -4,11 +4,11 @@ import { inngest } from '../../../ingest/client';
 
 export const appRouter = createTRPCRouter({
   invoke: baseProcedure
-    .input(z.object({ text: z.string() }))
+    .input(z.object({ email: z.string().email() }))
     .mutation(async ({ input }) => {
       await inngest.send({
-        name: 'test/hello.world',
-        data: { email: input.text },
+        name: 'user.email.submitted',
+        data: { email: input.email },
       });
     }),
 });
