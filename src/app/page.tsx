@@ -5,11 +5,15 @@ import PrefetchExample from '@/components/PrefetchExample';
 import { InngestTest } from '@/components/InngestTest';
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { trpc } from '@/trpc/client';
+import { toast } from 'sonner';
 
 const Page = () => {
   const [value, setValue] = useState("");
-  const invokeMutation = trpc.invoke.useMutation();
+  const invokeMutation = trpc.invoke.useMutation({
+    onSuccess: () => toast.success('Background job started')
+  });
   
   return (
     <div className="container mx-auto p-6 space-y-6">
@@ -30,13 +34,12 @@ const Page = () => {
             onChange={e => setValue(e.target.value)} 
             placeholder="Enter a value..."
           />
-          <button 
+          <Button 
             onClick={() => invokeMutation.mutate({ value })}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
             disabled={invokeMutation.isPending}
           >
-            {invokeMutation.isPending ? 'Invoking...' : 'Invoke'}
-          </button>
+            {invokeMutation.isPending ? 'Invoking...' : 'Invoke Background Job'}
+          </Button>
         </div>
       </div>
       
