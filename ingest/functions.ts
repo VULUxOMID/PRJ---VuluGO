@@ -1,6 +1,17 @@
 import { inngest } from "./client";
 import { createAgent, anthropic } from '@inngest/agent-kit';
 
+// Validate required environment variables at module load to fail fast and log once
+const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
+if (!ANTHROPIC_API_KEY || ANTHROPIC_API_KEY.trim().length === 0) {
+  const errorMessage = "Missing required environment variable ANTHROPIC_API_KEY. Please set it to a valid key before starting the service.";
+  // Log a clear message to aid debugging and halt execution immediately
+  // Throwing here ensures the failure is immediate and not repeated per invocation
+  // eslint-disable-next-line no-console
+  console.error(errorMessage);
+  throw new Error(errorMessage);
+}
+
 export const helloWorld = inngest.createFunction(
   { id: "hello-world" },
   { event: "helloWorld" },
@@ -17,7 +28,7 @@ export const helloWorld = inngest.createFunction(
         system: 'You are an expert summarizer. Summarize the input in exactly 2 words.',
         model: anthropic({
           model: 'claude-3-haiku-20240307',
-          apiKey: process.env.ANTHROPIC_API_KEY
+          apiKey: ANTHROPIC_API_KEY
         })
       });
       
