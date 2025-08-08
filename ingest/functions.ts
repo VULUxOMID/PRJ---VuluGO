@@ -1,5 +1,5 @@
 import { inngest } from "./client";
-import { createAgent, openai } from '@inngest/agent-kit';
+import { createAgent, anthropic } from '@inngest/agent-kit';
 
 export const helloWorld = inngest.createFunction(
   { id: "hello-world" },
@@ -15,9 +15,9 @@ export const helloWorld = inngest.createFunction(
       const agent = createAgent({
         name: 'summarizer',
         system: 'You are an expert summarizer. Summarize the input in exactly 2 words.',
-        model: openai({
-          model: 'gpt-4',
-          apiKey: process.env.OPENAI_API_KEY
+        model: anthropic({
+          model: 'claude-3-haiku-20240307',
+          apiKey: process.env.ANTHROPIC_API_KEY
         })
       });
       
