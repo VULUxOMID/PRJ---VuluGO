@@ -2,6 +2,27 @@
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+### Environment setup
+
+Create a `.env.local` file in the project root. Example values are in `.env.example`.
+
+Required variables used by the code today:
+
+- `DATABASE_URL` — Prisma datasource connection string
+- `OPENAI_API_KEY` — used by the Inngest agent
+
+Optional variables from the tutorial:
+
+- `NEXT_PUBLIC_APP_URL` — convenience public base URL
+- `E2B_API_KEY` — used when enabling E2B sandboxes
+- `VERCEL_URL` — provided automatically by Vercel in production
+
+To connect to the database via `psql` using `DATABASE_URL`, you can run the helper script:
+
+```bash
+bash scripts/psql.sh
+```
+
 ## Getting Started
 
 First, run the development server:
