@@ -25,9 +25,9 @@ export const helloWorld = inngest.createFunction(
     
     try {
       // Create sandbox and get its id
-      const sandboxId = await step.run('getSandboxId', async () => {
-        const templateId = process.env.E2B_TEMPLATE_ID || undefined
-        const sbx = templateId ? await Sandbox.create(templateId) : await Sandbox.create()
+      const sandboxId = await step.run('get-sandbox-id', async () => {
+        const templateName = 'vibe-nextjs-test-2'
+        const sbx = await Sandbox.create(templateName)
         // best-effort: set a 60s timeout if available in this SDK version
         const setTimeoutFn = (sbx as any).setTimeout as undefined | ((ms: number) => void)
         if (typeof setTimeoutFn === 'function') setTimeoutFn(60_000)
